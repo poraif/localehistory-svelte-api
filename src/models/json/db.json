@@ -30,8 +30,8 @@
       "title": "test",
       "description": "test",
       "year": "1956",
-      "latitude": 12,
-      "longitude": 123,
+      "lat": 12,
+      "lng": 123,
       "category": "Event",
       "_id": "e6d58e53-bf94-4816-bd7b-e8df40cbbd05",
       "streetid": "9bd7a3b4-c961-4629-b12f-5244b57fcd0c"
@@ -40,8 +40,8 @@
       "title": "James Joyce house",
       "description": "The house where James Joyce lived",
       "year": 1882,
-      "latitude": 53.3647,
-      "longitude": -6.0653,
+      "lat": 53.3647,
+      "lng": -6.0653,
       "category": "Residence",
       "_id": "00c2377e-7b4a-4185-b518-96c8c16d1b92",
       "streetid": "9bd7a3b4-c961-4629-b12f-5244b57fcd0c"
@@ -50,8 +50,8 @@
       "title": "GPO",
       "description": "The site of the 1916 Easter Rising. It is now a museum and post office. It's where the proclamation of independence was read out.",
       "year": 2003,
-      "latitude": 53.3498,
-      "longitude": -6.2603,
+      "lat": 53.3498,
+      "lng": -6.2603,
       "category": "Landmark",
       "_id": "c535cbe2-ba9c-4670-860e-88ef2b18b6d8",
       "streetid": "9bd7a3b4-c961-4629-b12f-5244b57fcd0c"

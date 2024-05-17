@@ -24,17 +24,17 @@ export const streetController = {
       },
     },
     handler: async function (request, h) {
-      const street = await db.streetStore.getStreetById(request.params.id);
+      const loggedInUser = request.auth.credentials;
       const newPlacemark = {
         title: request.payload.title,
         description: request.payload.description,
         year: Number(request.payload.year),
-        latitude: Number(request.payload.latitude),
-        longitude: Number(request.payload.longitude),
+        lat: Number(request.payload.lat),
+        lng: Number(request.payload.lng),
         category: request.payload.category,
       };
-      await db.placemarkStore.addPlacemark(street._id, newPlacemark);
-      return h.redirect(`/street/${street._id}`);
+      await db.placemarkStore.addPlacemark(loggedInUser._id, newPlacemark);
+      return h.redirect("/dashboard");
     },
   },
 

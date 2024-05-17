@@ -1,28 +1,35 @@
 import Boom from "@hapi/boom";
+import bcrypt from "bcrypt";
 import { db } from "../models/db.js";
 import { UserSpec, UserSpecPlus, UserArray, IdSpec, JwtAuth, UserCredentialsSpec } from "../models/joi-schemas.js";
 import { validationError } from "./logger.js";
 import { createToken } from "./jwt-utils.js";
+
 
 export const userApi = {
   create: {
     auth: false,
     handler: async function(request, h) {
       try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(request.payload.password, saltRounds);
+        request.payload.password = hashedPassword;
+        if (hashedPassword) {
+          console.log("Password hashed");
+        }
         const user = await db.userStore.addUser(request.payload);
         if (user) {
-          return h.response(user).code(201);
+          return h.response({ success: true, user }).code(201);
         }
         return Boom.badImplementation("error creating user");
       } catch (err) {
+        console.error(err);
         return Boom.serverUnavailable("Database Error");
       }
     },
     tags: ["api"],
     description: "Create a User",
     notes: "Returns the newly created user",
-    validate: { payload: UserSpec, failAction: validationError },
-    response: { schema: UserSpecPlus, failAction: validationError },
   },
 
   find: {
@@ -90,7 +97,11 @@ export const userApi = {
         if (!user) {
           return Boom.unauthorized("User not found");
         }
-        if (user.password !== request.payload.password){
+        const isValidPassword = await bcrypt.compare(request.payload.password, user.password);
+        if(isValidPassword) {
+          console.log("Password is valid");
+        }
+        if (!isValidPassword){
           return Boom.unauthorized("Invalid password");
         }
         const token = createToken(user);

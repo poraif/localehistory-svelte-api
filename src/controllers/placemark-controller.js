@@ -9,11 +9,35 @@ export const placemarkController = {
         title: placemark.title,
         description: placemark.description,
         year: placemark.year,
-        latitude: placemark.latitude,
-        longitude: placemark.longitude,
+        lat: placemark.lat,
+        lng: placemark.lng,
         category: placemark.category,
       };
       return h.view("placemark-view", viewData);
+    },
+  },
+
+  uploadImage: {
+    handler: async function (request, h) {
+      try {
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        const file = request.payload.img;
+        if (Object.keys(file).length > 0) {
+          const url = await imageStore.uploadImage(request.payload.img);
+          placemark.img = url;
+          await db.placemarkStore.updatePlacemark(placemark);
+        } 
+        return h.redirect(`/placemarks/${placemark._id}`);
+      } catch (err) {
+        console.log(err);
+        return h.redirect(`/placemarks/${placemark._id}`);
+      }
+    },
+    payload: {
+      multipart: true,
+      output: "data",
+      maxBytes: 209715200,
+      parse: true,
     },
   },
 
@@ -44,8 +68,8 @@ export const placemarkController = {
         title: request.payload.title,
         description: request.payload.description,
         year: Number(request.payload.year),
-        latitude: Number(request.payload.latitude),
-        longitude: Number(request.payload.longitude),
+        lat: Number(request.payload.lat),
+        lng: Number(request.payload.lng),
         category: request.payload.category,
       };
       await db.placemarkStore.updatePlacemark(placemark, newPlacemark);

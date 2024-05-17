@@ -66,6 +66,7 @@ export const streetApi = {
     validate: { payload: StreetSpec, failAction: validationError },
     response: { schema: StreetSpecPlus, failAction: validationError },
   },
+  
 
   deleteOne: {
     auth: {

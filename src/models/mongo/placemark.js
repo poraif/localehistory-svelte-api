@@ -6,12 +6,12 @@ const placemarkSchema = new Schema({
   title: String,
   description: String,
   year: Number,
-  latitude: Number,
-  longitude: Number,
+  lat: Number,
+  lng: Number,
   category: String,
-  streetid: {
+  userid: {
     type: Schema.Types.ObjectId,
-    ref: "Street",
+    ref: "User",
   },
 });
 

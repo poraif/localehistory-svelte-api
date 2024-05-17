@@ -22,14 +22,42 @@ export const placemarkApi = {
     notes: "Return all placemarkApi",
   },
 
-  findByStreet: {
+  uploadImage: {
     auth: {
       strategy: "jwt",
     },
     handler: async function (request, h) {
       try {
-        const street = await db.streetStore.getStreetById(request.params.id);
-        const placemarks = await db.placemarkStore.getPlacemarksByStreetId(street.id);
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        const file = request.payload.imagefile;
+        if (Object.keys(file).length > 0) {
+          const url = await imageStore.uploadImage(request.payload.imagefile);
+          placemark.img = url;
+          await db.placemarkStore.updatePlacemark(placemark);
+        } 
+        return h.redirect(`/placemarks/${placemark._id}`);
+      } catch (err) {
+        console.log(err);
+        return h.redirect(`/placemarks/${placemark._id}`);
+      }
+    },
+    
+    payload: {
+      multipart: true,
+      output: "data",
+      maxBytes: 209715200,
+      parse: true,
+    },
+  },
+
+  findByUser: {
+    auth: {
+      strategy: "jwt",
+    },
+    handler: async function (request, h) {
+      try {
+        const user = await db.userStore.getUserById(request.params.id);
+        const placemarks = await db.placemarkStore.getPlacemarksByUserId(user.id);
         return placemarks;
       } catch (err) {
         return Boom.serverUnavailable("Database Error");
@@ -37,10 +65,10 @@ export const placemarkApi = {
     },
     tags: ["api"],
     response: { schema: PlacemarkArraySpec, failAction: validationError },
-    description: "Get placemark by street Api",
-    notes: "Return placemarks by street Api",
+    description: "Get placemarks by user Api",
+    notes: "Return placemarks by user Api",
   },
-
+  
   findOne: {
     auth: {
       strategy: "jwt",
@@ -69,7 +97,8 @@ export const placemarkApi = {
     },
     handler: async function (request, h) {
       try {
-        const placemark = await db.placemarkStore.addPlacemark(request.params.id, request.payload);
+        const userId = request.auth.credentials.id;
+        const placemark = await db.placemarkStore.addPlacemark(userId, request.payload);
         if (placemark) {
           return h.response(placemark).code(201);
         }
@@ -81,8 +110,6 @@ export const placemarkApi = {
     tags: ["api"],
     description: "Create a placemark",
     notes: "Returns the newly created placemark",
-    validate: { payload: PlacemarkSpec },
-    response: { schema: PlacemarkSpecPlus, failAction: validationError },
   },
 
   deleteAll: {
@@ -119,6 +146,5 @@ export const placemarkApi = {
     },
     tags: ["api"],
     description: "Delete placemark",
-    validate: { params: { id: IdSpec }, failAction: validationError },
   },
 };
