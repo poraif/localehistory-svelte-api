@@ -161,9 +161,9 @@ export const placemarkApi = {
         }
         // eslint-disable-next-line prefer-destructuring
         const img = placemark.img;
-        const publicId = img.split("/").slice(-1)[0].split(".")[0];
-        await db.placemarkStore.deleteImage(publicId);
-        placemark.img = "";
+        const publicId = img.split("/").slice(-1)[0].split(".")[0]; // get public id from image url
+        await db.placemarkStore.deleteImage(publicId); // delete image from cloudinary
+        placemark.img = ""; // remove image url from placemark
         await db.placemarkStore.updatePlacemark(placemark, placemark);
         console.log("Image deleted");
         return h.response().code(204);
