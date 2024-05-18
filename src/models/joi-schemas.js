@@ -32,6 +32,7 @@ export const PlacemarkSpec = Joi.object()
     lng: Joi.number().required().min(-180).max(180).example(-6.278198),
     category: Joi.string().required().valid("Landmark", "Residence", "Event", "Other").example("Landmark"),
     userid: IdSpec,
+    img: Joi.string().optional().example("https://res.cloudinary.com/dzv3u9ygs/image/upload/v1628588237/irish-placemarks/BehanStatue.jpg"),
   })
   .label("Placemark");
 

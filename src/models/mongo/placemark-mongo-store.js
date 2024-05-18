@@ -1,4 +1,11 @@
+import cloudinary from "cloudinary";
 import { Placemark } from "./placemark.js";
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
 
 export const placemarkMongoStore = {
   async getAllPlacemarks() {
@@ -46,6 +53,11 @@ export const placemarkMongoStore = {
     placemarkDoc.lat = updatedPlacemark.lat;
     placemarkDoc.lng = updatedPlacemark.lng;
     placemarkDoc.category = updatedPlacemark.category;
+    placemarkDoc.img = updatedPlacemark.img;
     await placemarkDoc.save();
+  },
+
+  async deleteImage(publicId) {
+    await cloudinary.v2.uploader.destroy(publicId, {});
   },
 };

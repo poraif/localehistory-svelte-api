@@ -147,4 +147,31 @@ export const placemarkApi = {
     tags: ["api"],
     description: "Delete placemark",
   },
+  
+
+  deleteImage: {
+    auth: {
+      strategy: "jwt",
+    },
+    handler: async function (request, h) {
+      try {
+        const placemark = await db.placemarkStore.getPlacemarkById(request.params.id);
+        if (!placemark.img){
+          return Boom.notFound("No image to delete");
+        }
+        // eslint-disable-next-line prefer-destructuring
+        const img = placemark.img;
+        const publicId = img.split("/").slice(-1)[0].split(".")[0];
+        await db.placemarkStore.deleteImage(publicId);
+        placemark.img = "";
+        await db.placemarkStore.updatePlacemark(placemark, placemark);
+        console.log("Image deleted");
+        return h.response().code(204);
+      } catch (err) {
+        return Boom.serverUnavailable("No Placemark with this id");
+      }
+    },
+    tags: ["api"],
+    description: "Delete placemark image",
+  },
 };
